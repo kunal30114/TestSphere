@@ -60,7 +60,7 @@ export default function TestRoom() {
       setLoading(true);
       try {
         const result = await axios.post(
-          "http://localhost:8000/student/getTest",
+          `${import.meta.env.VITE_BACKEND_URL}/student/getTest`,
           { id: testId },
           { withCredentials: true }
         );
@@ -109,7 +109,7 @@ export default function TestRoom() {
 
     try {
       await axios.post(
-        "http://localhost:8000/student/submitTest",
+         `${import.meta.env.VITE_BACKEND_URL}/student/submitTest`,
         {
           quiz: testId,
           studentName: name,

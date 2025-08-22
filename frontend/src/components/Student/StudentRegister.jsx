@@ -23,7 +23,7 @@ function StudentRegister() {
 
       try {
          const user = await axios.post(
-          "http://localhost:8000/student/registerStudent",
+          `${import.meta.env.VITE_BACKEND_URL}/student/registerStudent`,
           {
             name: name,
             rollNo: rollNo,

@@ -18,7 +18,7 @@ function TeacherRegister() {
       }
       try {
          const user = await axios.post(
-          "http://localhost:8000/teacher/registerTeacher",
+          `${import.meta.env.VITE_BACKEND_URL}/teacher/registerTeacher`,
           {
             name: name,
             password : password,

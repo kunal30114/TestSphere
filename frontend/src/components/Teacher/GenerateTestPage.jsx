@@ -16,7 +16,8 @@ function GenerateTestPage() {
     e.preventDefault();
     try {
       const response = await axios.post(
-        "http://localhost:8000/teacher/generateTest",
+       
+        `${import.meta.env.VITE_BACKEND_URL}/teacher/generateTest`,
         {
           topic: topic,
           noOfQ,
