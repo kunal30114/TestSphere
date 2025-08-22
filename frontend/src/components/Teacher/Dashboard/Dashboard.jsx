@@ -17,7 +17,7 @@ function Dashboard() {
     const fetchData = async () => {
       try {
         const response = await axios.post(
-          `http://localhost:8000/teacher/getUser`,
+          `${import.meta.env.VITE_BACKEND_URL}/getUser`,
           {},
           { withCredentials: true }
         );

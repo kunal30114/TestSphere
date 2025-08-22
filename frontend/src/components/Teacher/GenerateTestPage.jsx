@@ -30,7 +30,7 @@ function GenerateTestPage() {
       );
       console.log(response);
       setLink(
-        `http://localhost:5173/student/StudentRegister/${response.data.data.dataUrl}`
+        `https://test-sphere.vercel.app/${response.data.data.dataUrl}`
       );
     } catch (error) {
       console.error(error);
