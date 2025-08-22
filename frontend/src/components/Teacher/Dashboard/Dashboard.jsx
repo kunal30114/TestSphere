@@ -17,10 +17,12 @@ function Dashboard() {
     const fetchData = async () => {
       try {
         const response = await axios.post(
-          `${import.meta.env.VITE_BACKEND_URL}/getUser`,
+          `${import.meta.env.VITE_BACKEND_URL}/teacher/getUser`,
           {},
           { withCredentials: true }
         );
+
+        console.log(response)
         setTeacherName(response.data.data.name);
         setTotalTests(response.data.data.myTest.length);
       } catch (error) {
@@ -32,7 +34,7 @@ function Dashboard() {
 
   const logoutUser = async ()=>{
     try {
-      await axios.post(`${import.meta.env.VITE_BACKEND_URL}/logoutTeacher`,
+      await axios.post(`${import.meta.env.VITE_BACKEND_URL}/teacher/logoutTeacher`,
         {},
         {withCredentials:true});
       alert("User Logged Out Successfully !!");
