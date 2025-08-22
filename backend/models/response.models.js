@@ -5,13 +5,21 @@ const responseSchema = new mongoose.Schema({
     type:mongoose.Schema.Types.ObjectId,
     ref:"Quiz"
   },
-  student :{
-    type:mongoose.Schema.Types.ObjectId,
+  studentName :{
+    type:String,
     ref:"Quiz"
   },
-  startTime :{
-    type : Date,
-    required:true,
+  studentEmail :{
+    type : String,
+    required : true
+  },
+  timeTaken :{
+    type : Number,
+    required:true
+  },
+  score : {
+    type: Number,
+    required : true
   }
 },{
   timestamps: true

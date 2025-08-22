@@ -113,7 +113,7 @@ const logoutTeacher = asyncHandler( async (req,res)=>{
   //clear refreshToken value in DB
   //clear token values in cookie
 
-  console.log("manav");
+  // console.log("manav");
   
   const instance = await Teacher.findById(req.user._id);
 
@@ -207,7 +207,7 @@ const generateQuiz = asyncHandler(async (req,res)=>{
         if(!topic || !noOfQ || !difficulty || !duration){
           throw new ApiError(400,"All required details are not mentioned for generating quiz")
         }
-        console.log("Hi2");
+        // console.log("Hi2");
         const llm = new ChatGoogleGenerativeAI({
           model: "gemini-2.0-flash",
           temperature: 0,
@@ -228,20 +228,26 @@ const generateQuiz = asyncHandler(async (req,res)=>{
             noOfQ : ${noOfQ}
           }`],
         ]);
-        console.log(req.user);
+        // console.log(req.user);
+        let temp = JSON.stringify(aiMsg.content);
+        temp = temp.replace("```json","");
+        temp = temp.replace("```","");
+        // temp = JSON.parse(temp);
+        // console.log(temp);
         
-
         const test = await Quiz.create({
           title : topic,
           createdBy : req.user,
           duration,
-          data : aiMsg.content
+          data : temp
         })
         
     
         return res.json(
           new ApiResponse(
-            200,{}
+            200,{
+              dataUrl : test._id
+            }
             ,
             "Test Generated Successfully"
           )
@@ -252,11 +258,17 @@ const generateQuiz = asyncHandler(async (req,res)=>{
         }
 })
 
-//functionality
+
+const getUser = asyncHandler(async (req,res)=>{
+    // console.log("Hi1 from getUser");
+    // console.log(req.user);
+    
+    
+    return res.status(200).json(
+      new ApiResponse(200,req.user,"")
+    )
+})
 
 
 
-
-
-
-export {registerTeacher,loginTeacher,logoutTeacher , refreshAccessToken, generateQuiz};
+export {registerTeacher,loginTeacher,logoutTeacher , refreshAccessToken, generateQuiz , getUser};

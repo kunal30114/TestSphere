@@ -1,7 +1,8 @@
 import express, { urlencoded } from "express";
 import cookieParser from "cookie-parser";
 import cors from "cors";
-
+import dotenv from "dotenv";
+dotenv.config();
 const app = express();
 
 
@@ -16,7 +17,7 @@ app.use(cookieParser());
 //cross-origin handling
 app.use(cors({
   origin : process.env.ORIGIN,
-  Credential: true
+  credentials: true
 }));
 
 
