@@ -32,7 +32,7 @@ function Dashboard() {
 
   const logoutUser = async ()=>{
     try {
-      await axios.post("http://localhost:8000/teacher/logoutTeacher",
+      await axios.post(`${import.meta.env.VITE_BACKEND_URL}/logoutTeacher`,
         {},
         {withCredentials:true});
       alert("User Logged Out Successfully !!");
