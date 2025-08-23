@@ -1,6 +1,8 @@
 import React , {useState} from 'react'
 import axios from "axios";
 import { Link , useNavigate } from 'react-router-dom';
+import {useDispatch} from 'react-redux';
+import { setUser, userStatus } from '../../slices/teacherSlice';
 
 
 function TeacherLogin() {
@@ -8,6 +10,7 @@ function TeacherLogin() {
   const [password,setPassword] = useState("");
   const [error,setError] = useState("");
   const navigate = useNavigate();
+  const dispatch = useDispatch();
 
   const loginTeacher = async ()=>{
       setError("");
@@ -25,10 +28,11 @@ function TeacherLogin() {
             withCredentials: true 
           }
         );
-        // console.log(user);
-        
+        // console.log(user.data.data.loggedInUser._id);
         alert("Teacher logged in successfully");
-        navigate(`/teacher?email=${email}`)
+        dispatch(setUser(user.data.data.loggedInUser._id));
+        dispatch(userStatus(true));
+        navigate(`/teacher`)
 
           
       } catch (error) {

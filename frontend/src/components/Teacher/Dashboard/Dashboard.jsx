@@ -1,17 +1,13 @@
 import React from "react";
 import { useEffect } from "react";
 import { useState } from "react";
-import { useParams, Link, useSearchParams } from "react-router-dom";
+import { Link } from "react-router-dom";
 import axios from "axios";
-import { useNavigate } from "react-router-dom";
+
 
 function Dashboard() {
   const [teacherName, setTeacherName] = useState("");
   const [totalTests, setTotalTests] = useState("");
-  const [totalStudents, setTotalStudents] = useState(0);
-  const [searchParams] = useSearchParams();
-  const email = searchParams.get("email");
-  const navigate = useNavigate();
 
   useEffect(() => {
     const fetchData = async () => {
@@ -22,7 +18,6 @@ function Dashboard() {
           { withCredentials: true }
         );
 
-        console.log(response)
         setTeacherName(response.data.data.name);
         setTotalTests(response.data.data.myTest.length);
       } catch (error) {
@@ -30,19 +25,9 @@ function Dashboard() {
       }
     };
     fetchData();
-  }, [email]);
+  }, []);
 
-  const logoutUser = async ()=>{
-    try {
-      await axios.post(`${import.meta.env.VITE_BACKEND_URL}/teacher/logoutTeacher`,
-        {},
-        {withCredentials:true});
-      alert("User Logged Out Successfully !!");
-      navigate("loginTeacher")
-    } catch (error) {
-        console.error("Error in logging out");
-    }
-  }
+  
 
   return (
     <div className="flex h-screen bg-gradient-to-r from-purple-600 to-pink-500">
@@ -54,23 +39,18 @@ function Dashboard() {
           </h2>
           <nav>
             <Link
-              to={`generateTest?email=${email}`}
+              to={`generateTest`}
               className="block py-3 px-4 text-white hover:bg-white hover:bg-opacity-20 rounded-lg mb-2"
             >
               Generate Test
             </Link>
             <Link
-              to={`view-results?email=${email}`}
+              to={`view-results`}
               className="block py-3 px-4 text-white hover:bg-white hover:bg-opacity-20 rounded-lg"
             >
               View Results
             </Link>
-            <button
-              className="px-4 py-2 bg-gradient-to-r from-purple-500 to-blue-700 text-white rounded-md hover:bg-blue-700 transition-colors duration-200 font-medium"
-              onClick={logoutUser}
-            >
-              LogOut
-            </button>
+            
           </nav>
         </div>
       </div>

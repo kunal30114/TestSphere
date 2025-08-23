@@ -30,8 +30,13 @@ function GenerateTestPage() {
       );
       console.log(response);
       setLink(
-        `https://test-sphere.vercel.app/${response.data.data.dataUrl}`
+        `https://test-sphere.vercel.app/student/StudentRegister/${response.data.data.dataUrl}`
       );
+      
+      
+
+
+
     } catch (error) {
       console.error(error);
       setError("Please login !!")

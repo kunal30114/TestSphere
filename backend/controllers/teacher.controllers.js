@@ -1,9 +1,9 @@
 import {ApiResponse, ApiError, asyncHandler} from "../utils/index.utils.js"
 import { Teacher } from "../models/teacher.models.js";
 import { Quiz } from "../models/quiz.models.js";
+import {Response} from "../models/response.models.js";
 import jwt from "jsonwebtoken";
 import { ChatGoogleGenerativeAI } from "@langchain/google-genai";
-
 
 //generate auth tokens
 const generateRefreshAndAccessToken = async (userId)=>{
@@ -99,7 +99,7 @@ const loginTeacher = asyncHandler( async (req,res)=>{
     new ApiResponse(
             200, 
             {
-                user: loggedInUser, accessToken, refreshToken
+                loggedInUser, accessToken, refreshToken
             },
             "Teacher logged In Successfully"
         )
@@ -113,8 +113,6 @@ const logoutTeacher = asyncHandler( async (req,res)=>{
   //check if user is already logged in
   //clear refreshToken value in DB
   //clear token values in cookie
-
-  // console.log("manav");
   
   const instance = await Teacher.findById(req.user._id);
 
@@ -144,64 +142,7 @@ const logoutTeacher = asyncHandler( async (req,res)=>{
 })
 
 
-const refreshAccessToken = asyncHandler( async (req,res) =>{
-  //extract incoming refresh token
-  //decrypt it using jwt.verify
-  //check in database 
-  //extract user and callgetAccessandRefreshToken
-  //save to databse and cookies
-  
-  const incomingRefreshToken = req.body.refreshToken || req.cookie.refreshToken;
 
-  if(!incomingRefreshToken){
-    throw new ApiError(401,"Invalid Incoming Refresh Token : Unautharised Req");
-  }
-
-  try {
-    const decodedToken = jwt.verify(
-            incomingRefreshToken,
-            process.env.REFRESH_TOKEN_SECRET
-        )
-
-    const user = await Teacher.findById(decodedToken?._id);
-
-    if(!user){
-      throw new ApiError(401,"No refresh token exists in DB");
-    }
-
-    if (incomingRefreshToken !== user?.refreshToken) {
-            throw new ApiError(401, "Refresh token is expired or used")
-    }
-    
-    const options = {
-          httpOnly: true,
-          secure: true,
-          sameSite : 'None'
-    };
-
-
-    const {accessToken, refreshToken: newRefreshToken} = await generateAccessAndRefereshTokens(user._id)
-    
-    // Save new refresh token to database
-    user.refreshToken = newRefreshToken;
-    await user.save({ validateBeforeSave: false });
-
-    return res
-    .status(200)
-    .cookie("accessToken", accessToken, options)
-    .cookie("refreshToken", newRefreshToken, options)
-    .json(
-        new ApiResponse(
-            200, 
-            {accessToken, refreshToken: newRefreshToken},
-            "Access token refreshed"
-        )
-    )
-
-  } catch (error) {
-    throw new ApiError(401,"Error while Refreshing AccessToken");
-  }
-})
 
 const generateQuiz = asyncHandler(async (req,res)=>{
      try {
@@ -232,12 +173,10 @@ const generateQuiz = asyncHandler(async (req,res)=>{
             noOfQ : ${noOfQ}
           }`],
         ]);
-        // console.log(req.user);
+
         let temp = JSON.stringify(aiMsg.content);
         temp = temp.replace("```json","");
         temp = temp.replace("```","");
-        // temp = JSON.parse(temp);
-        // console.log(temp);
         
         const test = await Quiz.create({
           title : topic,
@@ -246,7 +185,15 @@ const generateQuiz = asyncHandler(async (req,res)=>{
           data : temp
         })
         
-    
+        const instance = await Teacher.findById(req.user._id);
+
+        if(!instance){
+          throw new ApiError(400,"User Not Found!");
+        }
+
+        instance.myTest.push(test);
+        await instance.save({validateBeforeSave: false});
+              
         return res.json(
           new ApiResponse(
             200,{
@@ -264,15 +211,49 @@ const generateQuiz = asyncHandler(async (req,res)=>{
 
 
 const getUser = asyncHandler(async (req,res)=>{
-    // console.log("Hi1 from getUser");
-    // console.log(req.user);
-    
-    
+
     return res.status(200).json(
       new ApiResponse(200,req.user,"")
     )
 })
 
+const getTestList = asyncHandler(async (req,res)=>{
+  console.log("Hi from get test list");
+  
+  const id = req.user._id;
+  const instance = await Teacher.findById(id);
+  console.log(instance);
+  const testLinks = instance.myTest.map((id) => (id.toString()))
 
+  console.log(testLinks);
+  
+  return res.status(200).json(
+    new ApiResponse(200,
+      testLinks,
+      "Tests sent successfully!"
+    )
+  )
+})
 
-export {registerTeacher,loginTeacher,logoutTeacher , refreshAccessToken, generateQuiz , getUser};
+const getResponses = asyncHandler(async (req,res)=>{
+  const {testId} = req.body;
+  const data = await Response.find({quiz : testId});
+  console.log(data);
+  return res.status(200).json(
+    new ApiResponse(200,data,"Response Data Sent Successfully!")
+  )
+})
+
+const getQuizName = asyncHandler(async (req,res)=>{
+  console.log("Hi from getquiz name");
+  const {testId} = req.body;
+  console.log(testId);
+  const instance = await Quiz.findById(testId);
+  console.log(instance);
+  
+  return res.status(200).json(
+    new ApiResponse(200,instance.,"Response Data Sent Successfully!")
+  )
+})
+
+export {registerTeacher,loginTeacher,logoutTeacher , generateQuiz , getUser , getTestList , getResponses , getQuizName};
