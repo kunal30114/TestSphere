@@ -40,6 +40,15 @@ function Header() {
         <nav className="hidden md:flex items-center">
           <ul className="flex space-x-8">
             <li>
+              <Link
+                to={isLoggedIn ? "/teacher" : "/"}
+                className="text-gray-700 hover:text-blue-600 transition-colors duration-200 font-medium cursor-pointer"
+                
+              >
+                Home
+              </Link>
+            </li>
+            <li>
               <a
                 href="/#features"
                 className="text-gray-700 hover:text-blue-600 transition-colors duration-200 font-medium cursor-pointer"
