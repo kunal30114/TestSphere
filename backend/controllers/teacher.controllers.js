@@ -252,7 +252,7 @@ const getQuizName = asyncHandler(async (req,res)=>{
   console.log(instance);
   
   return res.status(200).json(
-    new ApiResponse(200,instance.,"Response Data Sent Successfully!")
+    new ApiResponse(200,instance,"Response Data Sent Successfully!")
   )
 })
 
